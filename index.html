@@ -136,7 +136,8 @@
     .page-view.active { display: flex; }
 
     /* ── STATS ROW ── */
-    .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .stats-row { display: flex; gap: 12px; justify-content: center; }
+    .stat-card { width: 100px; flex-shrink: 0; }
     @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr 1fr; } }
     .stat-card {
       background: var(--card); border: 1px solid var(--border);
