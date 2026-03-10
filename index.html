@@ -246,15 +246,7 @@
     }
     .modal-close:hover { color: var(--text); }
 
-    /* ── HISTORY ── */
-    .history-item { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
-    .history-item:last-child { border-bottom: none; }
-    .history-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 5px; }
-    .history-dot.green  { background: var(--green); }
-    .history-dot.red    { background: var(--accent2); }
-    .history-dot.yellow { background: var(--yellow); }
-    .history-text { font-size: 0.85rem; color: var(--text); }
-    .history-time { font-size: 0.75rem; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: 2px; }
+
 
     /* ── TOAST ── */
     #toast {
@@ -380,7 +372,6 @@
         <div class="avatar" id="header-avatar">?</div>
         <span id="header-username">User</span>
       </div>
-      <button class="btn btn-ghost btn-sm" onclick="showHistoryModal()">📋 History</button>
       <button class="btn btn-danger btn-sm" onclick="signOut()">Sign Out</button>
     </div>
   </header>
@@ -571,20 +562,6 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     HISTORY MODAL
-══════════════════════════════════════ -->
-<div class="modal-overlay" id="history-modal">
-  <div class="modal" style="max-width:500px;">
-    <div class="modal-title">📋 Task History</div>
-    <button class="modal-close" onclick="closeModal('history-modal')">✕</button>
-    <div style="margin-bottom:16px;">
-      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;" onclick="clearHistory()">🗑 Clear History</button>
-    </div>
-    <div id="history-list" style="max-height:400px;overflow-y:auto;">
-      <p style="color:var(--muted);font-size:0.85rem;">No history yet.</p>
-    </div>
-  </div>
 </div>
 
 <!-- TOAST -->
@@ -628,7 +605,6 @@
   let currentUsername = '';
   let pendingGoogleUser = null;   // holds Google user while waiting for username
   let allTasks      = [];
-  let taskHistory   = [];
   let currentFilter = 'all';
   let currentSearch = '';
   let currentSort   = 'created';
@@ -735,7 +711,6 @@
     currentUser     = null;
     currentUsername = '';
     allTasks        = [];
-    taskHistory     = [];
     showScreen('auth-screen');
   };
 
@@ -765,14 +740,12 @@
     // Show app
     showScreen('app');
     listenTasks();
-    loadHistory();
   }
 
   // ══════════════════════════════════════
   // FIRESTORE HELPERS
   // ══════════════════════════════════════
   function tasksRef()   { return collection(db, `users/${currentUser.uid}/tasks`); }
-  function historyRef() { return collection(db, `users/${currentUser.uid}/history`); }
 
   function listenTasks() {
     const q = query(tasksRef(), orderBy('createdAt', 'desc'));
@@ -783,17 +756,7 @@
     });
   }
 
-  async function loadHistory() {
-    const q    = query(historyRef(), orderBy('at', 'desc'));
-    const snap = await getDocs(q);
-    taskHistory = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  }
 
-  async function logHistory(action, taskTitle, color = '') {
-    const entry = { action, taskTitle, at: serverTimestamp(), color };
-    const ref   = await addDoc(historyRef(), entry);
-    taskHistory.unshift({ id: ref.id, ...entry, at: new Date() });
-  }
 
   // ══════════════════════════════════════
   // TASK CRUD
@@ -811,7 +774,6 @@
       createdAt:   serverTimestamp(),
     };
     await addDoc(tasksRef(), task);
-    await logHistory('added', title, '');
     clearForm();
     showToast('Task added!', 'success');
   };
@@ -825,7 +787,6 @@
   window.toggleTask = async (id, completed) => {
     const task = allTasks.find(t => t.id === id);
     await updateDoc(doc(db, `users/${currentUser.uid}/tasks`, id), { completed: !completed });
-    await logHistory(!completed ? 'completed' : 'reopened', task.title, !completed ? 'green' : 'yellow');
     showToast(!completed ? '✅ Task completed!' : '🔄 Task reopened', 'info');
   };
 
@@ -833,7 +794,6 @@
     const task = allTasks.find(t => t.id === id);
     if (!confirm(`Delete "${task?.title}"?`)) return;
     await deleteDoc(doc(db, `users/${currentUser.uid}/tasks`, id));
-    await logHistory('deleted', task?.title, 'red');
     showToast('Task deleted.', 'error');
   };
 
@@ -860,7 +820,6 @@
     };
     if (!updated.title) { showToast('Title cannot be empty.', 'error'); return; }
     await updateDoc(doc(db, `users/${currentUser.uid}/tasks`, id), updated);
-    await logHistory('edited', updated.title);
     closeModal('edit-modal');
     showToast('Task updated!', 'success');
   };
@@ -961,38 +920,6 @@
   window.searchTasks = (q) => { currentSearch = q; renderTasks(); };
   window.sortTasks   = (s) => { currentSort   = s; renderTasks(); };
 
-  // ══════════════════════════════════════
-  // HISTORY MODAL
-  // ══════════════════════════════════════
-  window.showHistoryModal = () => {
-    const container = document.getElementById('history-list');
-    if (!taskHistory.length) {
-      container.innerHTML = '<p style="color:var(--muted);font-size:0.85rem;">No history yet.</p>';
-    } else {
-      const colorMap = { green:'green', red:'red', yellow:'yellow' };
-      container.innerHTML = taskHistory.map(h => {
-        const d = h.at?.toDate ? h.at.toDate() : new Date(h.at);
-        return `<div class="history-item">
-          <div class="history-dot ${colorMap[h.color]||''}"></div>
-          <div>
-            <div class="history-text"><strong>${h.action}</strong> — ${escHtml(h.taskTitle||'')}</div>
-            <div class="history-time">${d.toLocaleString()}</div>
-          </div>
-        </div>`;
-      }).join('');
-    }
-    openModal('history-modal');
-  };
-
-  window.clearHistory = async () => {
-    if (!confirm('Clear all history?')) return;
-    const snap = await getDocs(historyRef());
-    await Promise.all(snap.docs.map(d => deleteDoc(d.ref)));
-    taskHistory = [];
-    document.getElementById('history-list').innerHTML =
-      '<p style="color:var(--muted);font-size:0.85rem;">No history yet.</p>';
-    showToast('History cleared.', 'info');
-  };
 
   // ══════════════════════════════════════
   // GOOGLE CALENDAR
@@ -1034,7 +961,6 @@
     try {
       await gapi.client.calendar.events.insert({ calendarId: 'primary', resource: event });
       showToast('Added to Google Calendar! 📅', 'success');
-      await logHistory('synced to calendar', t.title);
     } catch (e) { showToast('Calendar sync failed.', 'error'); }
   };
 
