@@ -579,7 +579,7 @@
     </div>
 
     <p style="font-size:0.76rem;color:var(--muted);margin-top:14px;line-height:1.5;">
-      💡 Default categories cannot be deleted. Deleting a custom category moves its tasks to <strong>Other</strong>.
+      💡 All categories can be edited or deleted. Deleting a category moves its tasks to <strong>Uncategorized</strong>.
     </p>
   </div>
 </div>
@@ -624,13 +624,18 @@
   const db   = getFirestore(app);
   const googleProvider = new GoogleAuthProvider();
 
-  // ── Constants ──
-  const DEFAULT_CATEGORIES = [
-    { id:'work',     name:'Work',     emoji:'💼', color:'#7c5cfc', isDefault:true },
-    { id:'personal', name:'Personal', emoji:'🏠', color:'#fc5c7d', isDefault:true },
-    { id:'health',   name:'Health',   emoji:'💪', color:'#2ecc71', isDefault:true },
-    { id:'learning', name:'Learning', emoji:'📚', color:'#f1c40f', isDefault:true },
-    { id:'other',    name:'Other',    emoji:'📌', color:'#6b6b8a', isDefault:true },
+  // ── Seed categories (written to Firestore on first login) ──
+  const SEED_CATEGORIES = [
+    { name:'Work',      emoji:'💼', color:'#7c5cfc' },
+    { name:'Personal',  emoji:'🏠', color:'#fc5c7d' },
+    { name:'Health',    emoji:'💪', color:'#2ecc71' },
+    { name:'Learning',  emoji:'📚', color:'#f1c40f' },
+    { name:'Finance',   emoji:'💰', color:'#f39c12' },
+    { name:'Shopping',  emoji:'🛒', color:'#3498db' },
+    { name:'Travel',    emoji:'✈️', color:'#1abc9c' },
+    { name:'Social',    emoji:'🤝', color:'#e84393' },
+    { name:'Creative',  emoji:'🎨', color:'#9b59b6' },
+    { name:'Other',     emoji:'📌', color:'#6b6b8a' },
   ];
 
   const EMOJIS = [
@@ -648,7 +653,7 @@
   // ── State ──
   let currentUser      = null;
   let allTasks         = [];
-  let allCategories    = [...DEFAULT_CATEGORIES];
+  let allCategories    = [];
   let taskHistory      = [];
   let currentFilter    = 'all';
   let currentCatFilter = null;
@@ -684,6 +689,7 @@
       document.getElementById('app').classList.remove('hidden');
       document.getElementById('user-email').textContent = user.email || user.displayName || '';
       listenCategories();
+      await seedCategoriesIfEmpty();
       listenTasks();
       loadHistory();
       initNewCatPicker();
@@ -702,10 +708,22 @@
   // ─────────────────────────────────────────
   // CATEGORIES
   // ─────────────────────────────────────────
+  // ── Seed categories on first login ──
+  async function seedCategoriesIfEmpty() {
+    const snap = await getDocs(categoriesRef());
+    if (snap.empty) {
+      const batch = writeBatch(db);
+      SEED_CATEGORIES.forEach((c, i) => {
+        const ref = doc(categoriesRef());
+        batch.set(ref, { ...c, createdAt: { seconds: Date.now()/1000 + i, nanoseconds: 0 }, order: i });
+      });
+      await batch.commit();
+    }
+  }
+
   function listenCategories() {
     onSnapshot(query(categoriesRef(), orderBy('createdAt','asc')), snap => {
-      const custom = snap.docs.map(d => ({ id:d.id, ...d.data(), isDefault:false }));
-      allCategories = [...DEFAULT_CATEGORIES, ...custom];
+      allCategories = snap.docs.map(d => ({ id:d.id, ...d.data() }));
       refreshCategorySelects();
       renderCatFilterSidebar();
       renderCatManager();
@@ -749,13 +767,10 @@
         <div class="cat-color-dot" style="background:${c.color}"></div>
         <span style="font-size:1.1rem;">${c.emoji}</span>
         <span class="cat-name-display">${escHtml(c.name)}</span>
-        ${c.isDefault
-          ? `<span style="font-size:0.7rem;color:var(--muted);padding:2px 8px;background:var(--card);border-radius:99px;border:1px solid var(--border);">default</span>`
-          : `<div class="cat-item-actions">
-               <button class="icon-btn" title="Edit" onclick="startEditCat('${c.id}')">✏️</button>
-               <button class="icon-btn del" title="Delete" onclick="deleteCat('${c.id}')">🗑</button>
-             </div>`
-        }
+        <div class="cat-item-actions">
+          <button class="icon-btn" title="Edit" onclick="startEditCat('${c.id}')">✏️</button>
+          <button class="icon-btn del" title="Delete" onclick="deleteCat('${c.id}')">🗑</button>
+        </div>
       </div>`
     ).join('');
   }
@@ -780,7 +795,7 @@
 
   window.startEditCat = (id) => {
     const c = allCategories.find(c => c.id === id);
-    if (!c || c.isDefault) return;
+    if (!c) return;
     const key = `edit-${id}`;
     pickerState[key] = { emoji: c.emoji, color: c.color };
     const row = document.getElementById(`cat-row-${id}`);
