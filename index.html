@@ -21,24 +21,17 @@
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Syne', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
+      background: var(--bg); color: var(--text);
+      font-family: 'Syne', sans-serif; min-height: 100vh; overflow-x: hidden;
     }
     body::before {
-      content: '';
-      position: fixed;
-      top: -200px; left: -200px;
+      content: ''; position: fixed; top: -200px; left: -200px;
       width: 600px; height: 600px;
       background: radial-gradient(circle, rgba(124,92,252,0.12) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
     }
     body::after {
-      content: '';
-      position: fixed;
-      bottom: -200px; right: -200px;
+      content: ''; position: fixed; bottom: -200px; right: -200px;
       width: 500px; height: 500px;
       background: radial-gradient(circle, rgba(252,92,125,0.08) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
@@ -47,8 +40,7 @@
     /* ── HEADER ── */
     header {
       position: sticky; top: 0; z-index: 100;
-      background: rgba(10,10,15,0.85);
-      backdrop-filter: blur(18px);
+      background: rgba(10,10,15,0.85); backdrop-filter: blur(18px);
       border-bottom: 1px solid var(--border);
       padding: 0 2rem;
       display: flex; align-items: center; justify-content: space-between;
@@ -57,8 +49,6 @@
     .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
     .logo span { color: var(--accent); }
     .header-actions { display: flex; gap: 10px; align-items: center; }
-
-    /* Username chip in header */
     .username-chip {
       display: inline-flex; align-items: center; gap: 8px;
       background: rgba(124,92,252,0.1); border: 1px solid rgba(124,92,252,0.25);
@@ -69,10 +59,10 @@
       width: 26px; height: 26px; border-radius: 50%;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       display: flex; align-items: center; justify-content: center;
-      font-size: 0.72rem; font-weight: 800; color: #fff;
-      flex-shrink: 0;
+      font-size: 0.72rem; font-weight: 800; color: #fff; flex-shrink: 0;
     }
 
+    /* ── BUTTONS ── */
     .btn {
       display: inline-flex; align-items: center; gap: 7px;
       padding: 9px 18px; border-radius: 10px;
@@ -91,7 +81,7 @@
 
     /* ── LAYOUT ── */
     .container { max-width: 1100px; margin: 0 auto; padding: 2rem; position: relative; z-index: 1; }
-    .main-grid { display: grid; grid-template-columns: 280px 1fr; gap: 2rem; }
+    .main-grid { display: grid; grid-template-columns: 260px 1fr; gap: 2rem; }
 
     /* ── SIDEBAR ── */
     .sidebar { display: flex; flex-direction: column; gap: 1rem; }
@@ -99,44 +89,28 @@
     .stat-card {
       background: var(--card); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 16px; text-align: center;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
+    .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
     .stat-card .num { font-size: 2rem; font-weight: 800; line-height: 1; }
     .stat-card .label { font-size: 0.72rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .stat-card.accent .num { color: var(--accent); }
     .stat-card.green  .num { color: var(--green); }
     .stat-card.yellow .num { color: var(--yellow); }
     .stat-card.red    .num { color: var(--accent2); }
-
     .panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; }
-    .panel-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 14px; }
+    .panel-title { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
 
-    /* ── FILTER DROPDOWN ── */
-    .filter-dropdown-wrap { position: relative; }
-    .filter-dropdown {
-      width: 100%;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 9px; padding: 10px 38px 10px 14px;
-      color: var(--text); font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 600;
-      cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;
-      transition: border-color 0.2s;
-    }
-    .filter-dropdown:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,92,252,0.12); }
-    .filter-dropdown option { background: var(--surface); color: var(--text); }
-    .filter-dropdown-arrow {
-      position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
-      pointer-events: none; color: var(--muted); font-size: 11px;
-    }
-    .filter-count-row {
-      display: flex; justify-content: space-between; margin-top: 8px;
-      font-size: 0.73rem; color: var(--muted); font-family: 'Space Mono', monospace;
-    }
-    .filter-count-row b { color: var(--accent); }
+    /* ── PROGRESS BAR ── */
+    .progress-bar-wrap { background: var(--surface); border-radius: 99px; height: 8px; overflow: hidden; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width 0.6s cubic-bezier(.4,0,.2,1); }
 
     /* ── MAIN CONTENT ── */
     .main-content { display: flex; flex-direction: column; gap: 1.5rem; }
 
     /* ── ADD TASK FORM ── */
     .add-task-panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; }
+    .add-task-header { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 16px; }
     .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
     .form-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 160px; }
     .form-group label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
@@ -151,75 +125,115 @@
     }
     .form-select option { background: var(--surface); }
     .form-textarea { resize: vertical; min-height: 70px; }
-    .form-actions { display: flex; gap: 10px; margin-top: 14px; }
+    .form-actions { display: flex; gap: 10px; margin-top: 16px; }
+
+    /* ── TASK CONTAINER ── */
+    .tasks-panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+
+    /* Header row */
+    .tasks-header {
+      padding: 16px 20px 12px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    }
+    .tasks-header-left { display: flex; align-items: center; gap: 10px; }
+    .tasks-header-left h2 { font-size: 1rem; font-weight: 800; }
+    .task-count-badge {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 99px; padding: 2px 10px;
+      font-size: 0.72rem; font-weight: 700; color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+    .sort-select {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 6px 10px;
+      color: var(--text); font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 600;
+      outline: none; cursor: pointer; transition: border-color 0.2s;
+    }
+    .sort-select:focus { border-color: var(--accent); }
+    .sort-select option { background: var(--surface); }
+
+    /* ── FILTER BAR ── */
+    .filter-bar {
+      padding: 0 20px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .filter-label {
+      font-size: 0.67rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--muted); flex-shrink: 0; min-width: 60px;
+    }
+    .pill-group { display: flex; gap: 5px; flex-wrap: wrap; }
+    .pill {
+      padding: 5px 12px; border-radius: 99px;
+      font-family: 'Syne', sans-serif; font-size: 0.73rem; font-weight: 700;
+      cursor: pointer; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted);
+      transition: all 0.15s; white-space: nowrap; user-select: none;
+    }
+    .pill:hover { border-color: var(--accent); color: var(--text); background: rgba(124,92,252,0.06); }
+    .pill.active { background: rgba(124,92,252,0.18); border-color: var(--accent); color: var(--accent); }
+    .pill.cat-personal.active { background: rgba(46,204,113,0.15);  border-color: var(--green);   color: var(--green); }
+    .pill.cat-health.active   { background: rgba(252,92,125,0.15);  border-color: var(--accent2); color: var(--accent2); }
+    .pill.cat-learning.active { background: rgba(241,196,15,0.15);  border-color: var(--yellow);  color: var(--yellow); }
+    .pill.cat-other.active    { background: rgba(160,160,160,0.1);  border-color: #777;           color: #aaa; }
 
     /* ── TASK LIST ── */
-    .tasks-panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    .tasks-header {
-      padding: 16px 20px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
-    }
-    .tasks-header h2 { font-size: 1rem; font-weight: 700; }
-    .search-wrap { position: relative; }
-    .search-wrap input {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 9px; padding: 8px 14px 8px 36px;
-      color: var(--text); font-family: 'Syne', sans-serif; font-size: 0.85rem;
-      outline: none; width: 220px; transition: border-color 0.2s;
-    }
-    .search-wrap input:focus { border-color: var(--accent); }
-    .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; }
     .task-list { list-style: none; }
     .task-item {
       display: flex; align-items: flex-start; gap: 14px;
-      padding: 16px 20px; border-bottom: 1px solid var(--border);
-      transition: background 0.15s; position: relative;
-      animation: slideIn 0.3s ease;
+      padding: 15px 20px; border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+      animation: slideIn 0.22s ease;
     }
-    @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     .task-item:last-child { border-bottom: none; }
-    .task-item:hover { background: rgba(255,255,255,0.02); }
-    .task-item.completed { opacity: 0.55; }
+    .task-item:hover { background: rgba(255,255,255,0.025); }
+    .task-item.completed { opacity: 0.48; }
     .task-item.completed .task-title { text-decoration: line-through; color: var(--muted); }
+    .task-item.overdue-item { border-left: 3px solid rgba(252,92,125,0.6); padding-left: 17px; }
 
     .custom-checkbox {
-      width: 20px; height: 20px; flex-shrink: 0; margin-top: 2px;
+      width: 20px; height: 20px; flex-shrink: 0; margin-top: 3px;
       border-radius: 6px; border: 2px solid var(--border);
       cursor: pointer; transition: all 0.2s;
       display: flex; align-items: center; justify-content: center;
     }
-    .custom-checkbox:hover { border-color: var(--accent); }
+    .custom-checkbox:hover { border-color: var(--accent); background: rgba(124,92,252,0.08); }
     .custom-checkbox.checked { background: var(--accent); border-color: var(--accent); }
-    .custom-checkbox.checked::after { content: '✓'; color: #fff; font-size: 12px; font-weight: 700; }
+    .custom-checkbox.checked::after { content: '✓'; color: #fff; font-size: 11px; font-weight: 800; }
 
     .task-body { flex: 1; min-width: 0; }
-    .task-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
-    .task-desc { font-size: 0.82rem; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
-    .task-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .tag { padding: 3px 10px; border-radius: 99px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .task-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 5px; line-height: 1.4; }
+    .task-desc {
+      font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; line-height: 1.55;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .task-meta { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+    .tag { padding: 3px 9px; border-radius: 99px; font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
     .tag-priority-high   { background: rgba(252,92,125,0.15); color: var(--accent2); }
     .tag-priority-medium { background: rgba(241,196,15,0.15);  color: var(--yellow); }
     .tag-priority-low    { background: rgba(46,204,113,0.15);  color: var(--green); }
-    .tag-cat { background: rgba(124,92,252,0.15); color: var(--accent); }
-    .task-date { font-size: 0.75rem; color: var(--muted); font-family: 'Space Mono', monospace; }
-    .task-date.overdue { color: var(--accent2); }
+    .tag-cat { background: rgba(124,92,252,0.12); color: var(--accent); }
+    .task-date { font-size: 0.72rem; color: var(--muted); font-family: 'Space Mono', monospace; }
+    .task-date.overdue { color: var(--accent2); font-weight: 700; }
 
-    .task-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .task-actions { display: flex; gap: 5px; flex-shrink: 0; padding-top: 2px; }
     .icon-btn {
-      width: 32px; height: 32px; border-radius: 8px;
+      width: 30px; height: 30px; border-radius: 7px;
       background: transparent; border: 1px solid var(--border);
-      color: var(--muted); cursor: pointer; font-size: 14px;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
+      color: var(--muted); cursor: pointer; font-size: 13px;
+      display: flex; align-items: center; justify-content: center; transition: all 0.15s;
     }
     .icon-btn:hover      { border-color: var(--accent);  color: var(--accent);  background: rgba(124,92,252,0.1); }
     .icon-btn.del:hover  { border-color: var(--accent2); color: var(--accent2); background: rgba(252,92,125,0.1); }
     .icon-btn.gcal:hover { border-color: #4285f4;        color: #4285f4;        background: rgba(66,133,244,0.1); }
 
     /* ── EMPTY STATE ── */
-    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
-    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
-    .empty-state p { font-size: 0.95rem; }
+    .empty-state { text-align: center; padding: 56px 20px; color: var(--muted); }
+    .empty-state .icon { font-size: 2.8rem; margin-bottom: 12px; }
+    .empty-state p { font-size: 0.9rem; line-height: 1.6; }
+    .empty-state .hint { font-size: 0.78rem; margin-top: 6px; opacity: 0.7; }
 
     /* ── MODAL ── */
     .modal-overlay {
@@ -242,11 +256,9 @@
       width: 32px; height: 32px; border-radius: 8px;
       background: var(--surface); border: 1px solid var(--border);
       color: var(--muted); cursor: pointer; font-size: 16px;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: center; justify-content: center; transition: color 0.15s;
     }
     .modal-close:hover { color: var(--text); }
-
-
 
     /* ── TOAST ── */
     #toast {
@@ -263,22 +275,18 @@
     #toast.error   { border-left: 3px solid var(--accent2); }
     #toast.info    { border-left: 3px solid var(--accent); }
 
-    /* ── PROGRESS BAR ── */
-    .progress-bar-wrap { background: var(--surface); border-radius: 99px; height: 6px; overflow: hidden; }
-    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width 0.5s; }
-
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .main-grid { grid-template-columns: 1fr; }
       .sidebar { order: 2; }
       .main-content { order: 1; }
+      .filter-label { display: none; }
     }
 
-    /* ── FULL-SCREEN OVERLAYS (auth / register) ── */
+    /* ── FULL-SCREEN OVERLAYS ── */
     .fullscreen-overlay {
       position: fixed; inset: 0; background: var(--bg);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 500;
+      display: flex; align-items: center; justify-content: center; z-index: 500;
     }
     .auth-card {
       background: var(--card); border: 1px solid var(--border);
@@ -290,12 +298,10 @@
     .auth-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; }
     .auth-divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 0.8rem; }
     .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
-    /* Register-specific card */
-    .reg-icon { font-size: 3rem; margin-bottom: 12px; }
+    .reg-icon  { font-size: 3rem; margin-bottom: 12px; }
     .reg-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 8px; }
-    .reg-sub { color: var(--muted); font-size: 0.88rem; margin-bottom: 28px; line-height: 1.6; }
-    .reg-hint { font-size: 0.75rem; color: var(--muted); margin-top: 6px; text-align: left; }
+    .reg-sub   { color: var(--muted); font-size: 0.88rem; margin-bottom: 28px; line-height: 1.6; }
+    .reg-hint  { font-size: 0.75rem; color: var(--muted); margin-top: 6px; text-align: left; }
 
     .hidden { display: none !important; }
     .spinning { animation: spin 1s linear infinite; }
@@ -311,8 +317,6 @@
   <div class="auth-card">
     <div class="auth-logo">Task<span>Flow</span></div>
     <p class="auth-sub">Your smart task management hub</p>
-
-    <!-- Google sign-in -->
     <button class="btn btn-primary" style="width:100%;justify-content:center;font-size:1rem;padding:14px;" onclick="signInWithGoogle()">
       <svg width="18" height="18" viewBox="0 0 18 18">
         <path fill="#fff" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/>
@@ -322,9 +326,7 @@
       </svg>
       Continue with Google
     </button>
-
     <div class="auth-divider">or</div>
-
     <div style="display:flex;flex-direction:column;gap:10px;">
       <input class="form-input" id="auth-email" type="email" placeholder="Email address"/>
       <input class="form-input" id="auth-password" type="password" placeholder="Password"/>
@@ -336,7 +338,7 @@
 </div>
 
 <!-- ══════════════════════════════════════
-     REGISTRATION SCREEN (new Google users)
+     REGISTRATION SCREEN
 ══════════════════════════════════════ -->
 <div id="register-screen" class="fullscreen-overlay hidden">
   <div class="auth-card">
@@ -367,7 +369,6 @@
   <header>
     <div class="logo">Task<span>Flow</span></div>
     <div class="header-actions">
-      <!-- Username chip replaces the old email text -->
       <div class="username-chip">
         <div class="avatar" id="header-avatar">?</div>
         <span id="header-username">User</span>
@@ -381,6 +382,7 @@
 
       <!-- ── SIDEBAR ── -->
       <aside class="sidebar">
+
         <div class="stats-grid">
           <div class="stat-card accent"><div class="num" id="stat-total">0</div><div class="label">Total</div></div>
           <div class="stat-card green"> <div class="num" id="stat-done">0</div> <div class="label">Done</div></div>
@@ -388,42 +390,20 @@
           <div class="stat-card red">  <div class="num" id="stat-overdue">0</div><div class="label">Overdue</div></div>
         </div>
 
-        <!-- Progress -->
         <div class="panel">
+          <div class="panel-title">Progress</div>
           <div class="progress-bar-wrap">
             <div class="progress-bar" id="progress-bar" style="width:0%"></div>
           </div>
-          <div style="display:flex;justify-content:space-between;margin-top:6px;">
-            <span style="font-size:0.75rem;color:var(--muted);">Completion</span>
-            <span style="font-size:0.75rem;font-weight:700;" id="progress-pct">0%</span>
+          <div style="display:flex;justify-content:space-between;margin-top:8px;">
+            <span style="font-size:0.75rem;color:var(--muted);">Completion rate</span>
+            <span style="font-size:0.75rem;font-weight:800;" id="progress-pct">0%</span>
           </div>
         </div>
 
-        <!-- Filter — now a dropdown -->
-        <div class="panel">
-          <div class="panel-title">Filter Tasks</div>
-          <div class="filter-dropdown-wrap">
-            <select class="filter-dropdown" id="filter-select" onchange="setFilterFromDropdown(this.value)">
-              <option value="all">📋 All Tasks</option>
-              <option value="pending">⏳ Pending</option>
-              <option value="completed">✅ Completed</option>
-              <option value="high">🔴 High Priority</option>
-              <option value="medium">🟡 Medium Priority</option>
-              <option value="low">🟢 Low Priority</option>
-            </select>
-            <span class="filter-dropdown-arrow">▼</span>
-          </div>
-          <!-- live count row -->
-          <div class="filter-count-row">
-            <span>Showing</span>
-            <b id="filter-count-display">0 tasks</b>
-          </div>
-        </div>
-
-        <!-- Google Calendar -->
         <div class="panel">
           <div class="panel-title">Google Calendar</div>
-          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Sync tasks with due dates to your Google Calendar</p>
+          <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Sync tasks with due dates to your calendar</p>
           <button class="btn btn-google btn-sm" style="width:100%;justify-content:center;" onclick="initGoogleCalendar()">
             <svg width="16" height="16" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -435,18 +415,20 @@
           </button>
           <p id="gcal-status" style="font-size:0.75rem;color:var(--green);margin-top:8px;text-align:center;"></p>
         </div>
+
       </aside>
 
       <!-- ── MAIN CONTENT ── -->
       <main class="main-content">
 
-        <!-- Add Task -->
+        <!-- ADD TASK -->
         <div class="add-task-panel">
-          <div style="font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;">➕ Add New Task</div>
+          <div class="add-task-header">➕ Add New Task</div>
           <div class="form-row">
             <div class="form-group" style="flex:2;">
               <label>Task Title *</label>
-              <input class="form-input" id="task-title" placeholder="What needs to be done?"/>
+              <input class="form-input" id="task-title" placeholder="What needs to be done?"
+                     onkeydown="if(event.key==='Enter') addTask()"/>
             </div>
             <div class="form-group">
               <label>Priority</label>
@@ -483,39 +465,69 @@
           </div>
         </div>
 
-        <!-- Task List -->
+        <!-- TASK LIST CONTAINER -->
         <div class="tasks-panel">
+
+          <!-- Header: title + count + sort -->
           <div class="tasks-header">
-            <h2 id="list-title">All Tasks</h2>
-            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-              <div class="search-wrap">
-                <span class="search-icon">🔍</span>
-                <input placeholder="Search tasks..." oninput="searchTasks(this.value)"/>
-              </div>
-              <select class="form-select" style="padding:8px 12px;font-size:0.82rem;" onchange="sortTasks(this.value)">
-                <option value="created">Sort: Newest</option>
-                <option value="due">Sort: Due Date</option>
-                <option value="priority">Sort: Priority</option>
-                <option value="title">Sort: A–Z</option>
-              </select>
+            <div class="tasks-header-left">
+              <h2 id="list-title">All Tasks</h2>
+              <span class="task-count-badge" id="task-count-badge">0 tasks</span>
             </div>
+            <select class="sort-select" onchange="sortTasks(this.value)">
+              <option value="created">↓ Newest</option>
+              <option value="due">📅 Due Date</option>
+              <option value="priority">🔴 Priority</option>
+              <option value="title">A–Z</option>
+            </select>
           </div>
+
+          <!-- Filter pills -->
+          <div class="filter-bar">
+
+            <div class="filter-row">
+              <span class="filter-label">Status</span>
+              <div class="pill-group" id="status-pills">
+                <button class="pill active" data-status="all"       onclick="setStatusFilter('all',this)">All</button>
+                <button class="pill"        data-status="pending"   onclick="setStatusFilter('pending',this)">⏳ Pending</button>
+                <button class="pill"        data-status="completed" onclick="setStatusFilter('completed',this)">✅ Done</button>
+                <button class="pill"        data-status="high"      onclick="setStatusFilter('high',this)">🔴 High</button>
+                <button class="pill"        data-status="medium"    onclick="setStatusFilter('medium',this)">🟡 Medium</button>
+                <button class="pill"        data-status="low"       onclick="setStatusFilter('low',this)">🟢 Low</button>
+              </div>
+            </div>
+
+            <div class="filter-row">
+              <span class="filter-label">Category</span>
+              <div class="pill-group" id="category-pills">
+                <button class="pill active"       data-cat="all"      onclick="setCatFilter('all',this)">All</button>
+                <button class="pill cat-work"     data-cat="work"     onclick="setCatFilter('work',this)">💼 Work</button>
+                <button class="pill cat-personal" data-cat="personal" onclick="setCatFilter('personal',this)">🏠 Personal</button>
+                <button class="pill cat-health"   data-cat="health"   onclick="setCatFilter('health',this)">💪 Health</button>
+                <button class="pill cat-learning" data-cat="learning" onclick="setCatFilter('learning',this)">📚 Learning</button>
+                <button class="pill cat-other"    data-cat="other"    onclick="setCatFilter('other',this)">📌 Other</button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Tasks -->
           <ul class="task-list" id="task-list">
             <li class="empty-state">
               <div class="icon">📋</div>
-              <p>No tasks yet. Add your first task above!</p>
+              <p>No tasks yet.</p>
+              <p class="hint">Add your first task above to get started!</p>
             </li>
           </ul>
-        </div>
+
+        </div><!-- /tasks-panel -->
 
       </main>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     EDIT MODAL
-══════════════════════════════════════ -->
+<!-- EDIT MODAL -->
 <div class="modal-overlay" id="edit-modal">
   <div class="modal">
     <div class="modal-title">✏️ Edit Task</div>
@@ -562,8 +574,6 @@
   </div>
 </div>
 
-</div>
-
 <!-- TOAST -->
 <div id="toast"></div>
 
@@ -578,7 +588,7 @@
     onAuthStateChanged, signOut as fbSignOut
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import {
-    getFirestore, collection, addDoc, getDocs, doc,
+    getFirestore, collection, addDoc, doc,
     getDoc, setDoc, updateDoc, deleteDoc,
     query, orderBy, onSnapshot, serverTimestamp
   } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -600,65 +610,43 @@
   const db             = getFirestore(app);
   const googleProvider = new GoogleAuthProvider();
 
-  // ── App State ──
-  let currentUser   = null;
-  let currentUsername = '';
-  let pendingGoogleUser = null;   // holds Google user while waiting for username
-  let allTasks      = [];
-  let currentFilter = 'all';
-  let currentSearch = '';
-  let currentSort   = 'created';
-  let gcalConnected = false;
-  let gapi          = null;
+  // ── State ──
+  let currentUser       = null;
+  let currentUsername   = '';
+  let pendingGoogleUser = null;
+  let allTasks          = [];
+  let currentFilter     = 'all';
+  let currentCatFilter  = 'all';
+  let currentSort       = 'created';
+  let gcalConnected     = false;
+  let gapi              = null;
 
   // ══════════════════════════════════════
   // AUTH
   // ══════════════════════════════════════
-
-  // Google Sign-In → check if registered
   window.signInWithGoogle = async () => {
     document.getElementById('auth-error').textContent = '';
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user   = result.user;
-      // Check Firestore for existing profile
-      const profileSnap = await getDoc(doc(db, 'users', user.uid, 'profile', 'info'));
-      if (profileSnap.exists()) {
-        // Registered → go straight to app
-        launchApp(user, profileSnap.data().username);
-      } else {
-        // Not registered → show username registration screen
-        pendingGoogleUser = user;
-        showScreen('register-screen');
-      }
-    } catch (e) {
-      showAuthError(e.message);
-    }
+      const result      = await signInWithPopup(auth, googleProvider);
+      const profileSnap = await getDoc(doc(db, 'users', result.user.uid, 'profile', 'info'));
+      if (profileSnap.exists()) { launchApp(result.user, profileSnap.data().username); }
+      else { pendingGoogleUser = result.user; showScreen('register-screen'); }
+    } catch (e) { showAuthError(e.message); }
   };
 
-  // Email Sign-In
   window.signInEmail = async () => {
     document.getElementById('auth-error').textContent = '';
     const email = document.getElementById('auth-email').value.trim();
     const pass  = document.getElementById('auth-password').value;
     if (!email || !pass) { showAuthError('Please enter email and password.'); return; }
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
-      // Email users must have a profile already (created during sign-up)
+      const cred        = await signInWithEmailAndPassword(auth, email, pass);
       const profileSnap = await getDoc(doc(db, 'users', cred.user.uid, 'profile', 'info'));
-      if (profileSnap.exists()) {
-        launchApp(cred.user, profileSnap.data().username);
-      } else {
-        // Edge case: profile missing → send to registration
-        pendingGoogleUser = cred.user;
-        showScreen('register-screen');
-      }
-    } catch (e) {
-      showAuthError(e.message);
-    }
+      if (profileSnap.exists()) { launchApp(cred.user, profileSnap.data().username); }
+      else { pendingGoogleUser = cred.user; showScreen('register-screen'); }
+    } catch (e) { showAuthError(e.message); }
   };
 
-  // Email Sign-Up → immediately go to registration screen to set username
   window.signUpEmail = async () => {
     document.getElementById('auth-error').textContent = '';
     const email = document.getElementById('auth-email').value.trim();
@@ -666,86 +654,59 @@
     if (!email || !pass) { showAuthError('Please enter email and password.'); return; }
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, pass);
-      pendingGoogleUser = cred.user;
-      showScreen('register-screen');
-    } catch (e) {
-      showAuthError(e.message);
-    }
+      pendingGoogleUser = cred.user; showScreen('register-screen');
+    } catch (e) { showAuthError(e.message); }
   };
 
-  // Username validation feedback
   window.validateUsername = (val) => {
+    const ok  = /^[a-zA-Z0-9_]{3,30}$/.test(val);
     const hint = document.getElementById('reg-hint');
-    const btn  = document.getElementById('reg-submit-btn');
-    const ok   = /^[a-zA-Z0-9_]{3,30}$/.test(val);
-    hint.textContent = ok
-      ? '✅ Looks good!'
-      : '3–30 characters, letters, numbers, underscores only.';
+    hint.textContent = ok ? '✅ Looks good!' : '3–30 characters, letters, numbers, underscores only.';
     hint.style.color = ok ? 'var(--green)' : 'var(--muted)';
-    btn.disabled = !ok;
+    document.getElementById('reg-submit-btn').disabled = !ok;
   };
 
-  // Submit username → save profile → launch app
   window.submitUsername = async () => {
     const username = document.getElementById('reg-username').value.trim();
     if (!/^[a-zA-Z0-9_]{3,30}$/.test(username)) {
-      document.getElementById('reg-error').textContent = 'Invalid username format.';
-      return;
+      document.getElementById('reg-error').textContent = 'Invalid username format.'; return;
     }
     document.getElementById('reg-error').textContent = '';
     try {
-      const user = pendingGoogleUser;
-      await setDoc(doc(db, 'users', user.uid, 'profile', 'info'), {
-        username,
-        email: user.email || '',
-        createdAt: serverTimestamp()
+      await setDoc(doc(db, 'users', pendingGoogleUser.uid, 'profile', 'info'), {
+        username, email: pendingGoogleUser.email || '', createdAt: serverTimestamp()
       });
-      launchApp(user, username);
-    } catch (e) {
-      document.getElementById('reg-error').textContent = e.message;
-    }
+      launchApp(pendingGoogleUser, username);
+    } catch (e) { document.getElementById('reg-error').textContent = e.message; }
   };
 
   window.signOut = async () => {
     await fbSignOut(auth);
-    currentUser     = null;
-    currentUsername = '';
-    allTasks        = [];
+    currentUser = null; currentUsername = ''; allTasks = [];
     showScreen('auth-screen');
   };
 
-  // ── Auth state listener (handles page refresh) ──
   onAuthStateChanged(auth, async user => {
     if (user) {
       const profileSnap = await getDoc(doc(db, 'users', user.uid, 'profile', 'info'));
-      if (profileSnap.exists()) {
-        launchApp(user, profileSnap.data().username);
-      } else {
-        // Logged in but no profile yet (rare: interrupted sign-up)
-        pendingGoogleUser = user;
-        showScreen('register-screen');
-      }
-    } else {
-      showScreen('auth-screen');
-    }
+      if (profileSnap.exists()) { launchApp(user, profileSnap.data().username); }
+      else { pendingGoogleUser = user; showScreen('register-screen'); }
+    } else { showScreen('auth-screen'); }
   });
 
-  // ── Launch the main app ──
   function launchApp(user, username) {
     currentUser     = user;
     currentUsername = username;
-    // Set header chip
     document.getElementById('header-username').textContent = username;
     document.getElementById('header-avatar').textContent   = username.charAt(0).toUpperCase();
-    // Show app
     showScreen('app');
     listenTasks();
   }
 
   // ══════════════════════════════════════
-  // FIRESTORE HELPERS
+  // FIRESTORE
   // ══════════════════════════════════════
-  function tasksRef()   { return collection(db, `users/${currentUser.uid}/tasks`); }
+  function tasksRef() { return collection(db, `users/${currentUser.uid}/tasks`); }
 
   function listenTasks() {
     const q = query(tasksRef(), orderBy('createdAt', 'desc'));
@@ -756,15 +717,13 @@
     });
   }
 
-
-
   // ══════════════════════════════════════
   // TASK CRUD
   // ══════════════════════════════════════
   window.addTask = async () => {
     const title = document.getElementById('task-title').value.trim();
     if (!title) { showToast('Please enter a task title.', 'error'); return; }
-    const task = {
+    await addDoc(tasksRef(), {
       title,
       description: document.getElementById('task-desc').value.trim(),
       priority:    document.getElementById('task-priority').value,
@@ -772,8 +731,7 @@
       due:         document.getElementById('task-due').value || null,
       completed:   false,
       createdAt:   serverTimestamp(),
-    };
-    await addDoc(tasksRef(), task);
+    });
     clearForm();
     showToast('Task added!', 'success');
   };
@@ -785,9 +743,8 @@
   };
 
   window.toggleTask = async (id, completed) => {
-    const task = allTasks.find(t => t.id === id);
     await updateDoc(doc(db, `users/${currentUser.uid}/tasks`, id), { completed: !completed });
-    showToast(!completed ? '✅ Task completed!' : '🔄 Task reopened', 'info');
+    showToast(!completed ? '✅ Completed!' : '🔄 Reopened', 'info');
   };
 
   window.deleteTask = async (id) => {
@@ -810,7 +767,7 @@
   };
 
   window.saveEdit = async () => {
-    const id      = document.getElementById('edit-task-id').value;
+    const id = document.getElementById('edit-task-id').value;
     const updated = {
       title:       document.getElementById('edit-title').value.trim(),
       description: document.getElementById('edit-desc').value.trim(),
@@ -829,12 +786,6 @@
   // ══════════════════════════════════════
   function getFiltered() {
     let tasks = [...allTasks];
-    if (currentSearch) {
-      const q = currentSearch.toLowerCase();
-      tasks = tasks.filter(t =>
-        t.title.toLowerCase().includes(q) || (t.description||'').toLowerCase().includes(q)
-      );
-    }
     switch (currentFilter) {
       case 'pending':   tasks = tasks.filter(t => !t.completed); break;
       case 'completed': tasks = tasks.filter(t =>  t.completed); break;
@@ -842,9 +793,10 @@
       case 'medium':    tasks = tasks.filter(t => t.priority === 'medium'); break;
       case 'low':       tasks = tasks.filter(t => t.priority === 'low'); break;
     }
+    if (currentCatFilter !== 'all') tasks = tasks.filter(t => t.category === currentCatFilter);
     switch (currentSort) {
       case 'due':      tasks.sort((a,b) => (a.due||'9999') > (b.due||'9999') ? 1 : -1); break;
-      case 'priority': { const p = {high:0,medium:1,low:2}; tasks.sort((a,b) => p[a.priority]-p[b.priority]); break; }
+      case 'priority': { const p={high:0,medium:1,low:2}; tasks.sort((a,b)=>p[a.priority]-p[b.priority]); break; }
       case 'title':    tasks.sort((a,b) => a.title.localeCompare(b.title)); break;
     }
     return tasks;
@@ -854,32 +806,38 @@
     const list  = document.getElementById('task-list');
     const tasks = getFiltered();
     const today = new Date().toISOString().split('T')[0];
+    const n     = tasks.length;
 
-    // Update filter count display
-    document.getElementById('filter-count-display').textContent =
-      tasks.length + (tasks.length === 1 ? ' task' : ' tasks');
+    document.getElementById('task-count-badge').textContent = n + (n === 1 ? ' task' : ' tasks');
 
-    if (!tasks.length) {
-      list.innerHTML = `<li class="empty-state"><div class="icon">🎉</div><p>No tasks here.</p></li>`;
+    if (!n) {
+      const filtered = currentFilter !== 'all' || currentCatFilter !== 'all';
+      list.innerHTML = `
+        <li class="empty-state">
+          <div class="icon">${filtered ? '🔍' : '📋'}</div>
+          <p>${filtered ? 'No tasks match this filter.' : 'No tasks yet.'}</p>
+          <p class="hint">${filtered ? 'Try a different filter above.' : 'Add your first task above!'}</p>
+        </li>`;
       return;
     }
+
     list.innerHTML = tasks.map(t => {
-      const overdue   = t.due && t.due < today && !t.completed;
-      const catEmoji  = {work:'💼',personal:'🏠',health:'💪',learning:'📚',other:'📌'}[t.category] || '📌';
+      const overdue  = t.due && t.due < today && !t.completed;
+      const catEmoji = {work:'💼',personal:'🏠',health:'💪',learning:'📚',other:'📌'}[t.category] || '📌';
       return `
-      <li class="task-item ${t.completed ? 'completed' : ''}">
-        <div class="custom-checkbox ${t.completed ? 'checked' : ''}" onclick="toggleTask('${t.id}', ${t.completed})"></div>
+      <li class="task-item ${t.completed ? 'completed' : ''} ${overdue ? 'overdue-item' : ''}">
+        <div class="custom-checkbox ${t.completed ? 'checked' : ''}" onclick="toggleTask('${t.id}',${t.completed})"></div>
         <div class="task-body">
           <div class="task-title">${escHtml(t.title)}</div>
           ${t.description ? `<div class="task-desc">${escHtml(t.description)}</div>` : ''}
           <div class="task-meta">
             <span class="tag tag-priority-${t.priority}">${t.priority}</span>
             <span class="tag tag-cat">${catEmoji} ${t.category}</span>
-            ${t.due ? `<span class="task-date ${overdue ? 'overdue' : ''}">📅 ${overdue ? '⚠ ' : ''}${t.due}</span>` : ''}
+            ${t.due ? `<span class="task-date ${overdue?'overdue':''}">📅 ${overdue?'⚠ Overdue · ':''}${t.due}</span>` : ''}
           </div>
         </div>
         <div class="task-actions">
-          ${t.due && gcalConnected ? `<button class="icon-btn gcal" title="Add to Google Calendar" onclick="addToCalendar('${t.id}')">📅</button>` : ''}
+          ${t.due && gcalConnected ? `<button class="icon-btn gcal" title="Add to Calendar" onclick="addToCalendar('${t.id}')">📅</button>` : ''}
           <button class="icon-btn"     title="Edit"   onclick="openEdit('${t.id}')">✏️</button>
           <button class="icon-btn del" title="Delete" onclick="deleteTask('${t.id}')">🗑</button>
         </div>
@@ -903,46 +861,45 @@
   }
 
   // ══════════════════════════════════════
-  // FILTER / SORT / SEARCH
+  // FILTER / SORT
   // ══════════════════════════════════════
-
-  // Called by the filter dropdown
-  window.setFilterFromDropdown = (filter) => {
+  window.setStatusFilter = (filter, btn) => {
     currentFilter = filter;
-    const labels = {
-      all:'All Tasks', pending:'Pending', completed:'Completed',
-      high:'High Priority', medium:'Medium Priority', low:'Low Priority'
-    };
+    document.querySelectorAll('#status-pills .pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const labels = { all:'All Tasks', pending:'Pending', completed:'Completed', high:'High Priority', medium:'Medium Priority', low:'Low Priority' };
     document.getElementById('list-title').textContent = labels[filter];
     renderTasks();
   };
 
-  window.searchTasks = (q) => { currentSearch = q; renderTasks(); };
-  window.sortTasks   = (s) => { currentSort   = s; renderTasks(); };
+  window.setCatFilter = (cat, btn) => {
+    currentCatFilter = cat;
+    document.querySelectorAll('#category-pills .pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    renderTasks();
+  };
 
+  window.sortTasks = (s) => { currentSort = s; renderTasks(); };
 
   // ══════════════════════════════════════
   // GOOGLE CALENDAR
   // ══════════════════════════════════════
   window.initGoogleCalendar = () => {
-    const script    = document.createElement('script');
-    script.src      = 'https://apis.google.com/js/api.js';
-    script.onload   = () => {
+    const script = document.createElement('script');
+    script.src   = 'https://apis.google.com/js/api.js';
+    script.onload = () => {
       window.gapi.load('client:auth2', () => {
         window.gapi.client.init({
-          apiKey:         'YOUR_GOOGLE_API_KEY',     // 🔑 Replace
-          clientId:       'YOUR_GOOGLE_CLIENT_ID',   // 🔑 Replace
-          discoveryDocs:  ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-          scope:          'https://www.googleapis.com/auth/calendar.events'
+          apiKey:        'YOUR_GOOGLE_API_KEY',    // 🔑 Replace
+          clientId:      'YOUR_GOOGLE_CLIENT_ID',  // 🔑 Replace
+          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+          scope:         'https://www.googleapis.com/auth/calendar.events'
         }).then(() => window.gapi.auth2.getAuthInstance().signIn())
           .then(() => {
-            gcalConnected = true;
-            gapi = window.gapi;
+            gcalConnected = true; gapi = window.gapi;
             document.getElementById('gcal-status').textContent = '✅ Connected';
-            renderTasks();
-            showToast('Google Calendar connected!', 'success');
-          })
-          .catch(e => showToast('Calendar error: ' + e.error, 'error'));
+            renderTasks(); showToast('Google Calendar connected!', 'success');
+          }).catch(e => showToast('Calendar error: ' + e.error, 'error'));
       });
     };
     document.head.appendChild(script);
@@ -951,15 +908,13 @@
   window.addToCalendar = async (taskId) => {
     const t = allTasks.find(t => t.id === taskId);
     if (!t || !t.due || !gapi) return;
-    const event = {
-      summary:     t.title,
-      description: t.description || '',
-      start: { date: t.due, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
-      end:   { date: t.due, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
-      reminders: { useDefault: true }
-    };
     try {
-      await gapi.client.calendar.events.insert({ calendarId: 'primary', resource: event });
+      await gapi.client.calendar.events.insert({ calendarId:'primary', resource:{
+        summary: t.title, description: t.description || '',
+        start: { date: t.due, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+        end:   { date: t.due, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+        reminders: { useDefault: true }
+      }});
       showToast('Added to Google Calendar! 📅', 'success');
     } catch (e) { showToast('Calendar sync failed.', 'error'); }
   };
@@ -970,39 +925,26 @@
   function showScreen(id) {
     ['auth-screen','register-screen','app'].forEach(s => {
       const el = document.getElementById(s);
-      if (s === id) {
-        el.classList.remove('hidden');
-        if (s !== 'app') el.style.display = 'flex';
-      } else {
-        el.classList.add('hidden');
-        el.style.display = '';
-      }
+      if (s === id) { el.classList.remove('hidden'); if (s !== 'app') el.style.display = 'flex'; }
+      else          { el.classList.add('hidden');    el.style.display = ''; }
     });
   }
 
   window.openModal  = (id) => document.getElementById(id).classList.add('open');
   window.closeModal = (id) => document.getElementById(id).classList.remove('open');
-
-  function showAuthError(msg) { document.getElementById('auth-error').textContent = msg; }
-
-  function escHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
+  function showAuthError(m) { document.getElementById('auth-error').textContent = m; }
+  function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   let toastTimer;
-  window.showToast = (msg, type = 'info') => {
+  window.showToast = (msg, type='info') => {
     const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className   = `show ${type}`;
+    t.textContent = msg; t.className = `show ${type}`;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
   };
 
-  // Close modals on overlay click
-  document.querySelectorAll('.modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-      if (e.target === overlay) overlay.classList.remove('open');
-    });
+  document.querySelectorAll('.modal-overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
   });
 </script>
 </body>
