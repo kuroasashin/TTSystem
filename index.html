@@ -682,7 +682,7 @@
   };
   function showAuthError(m) { document.getElementById('auth-error').textContent = m; }
 
-  onAuthStateChanged(auth, user => {
+  onAuthStateChanged(auth, async user => {
     if (user) {
       currentUser = user;
       document.getElementById('auth-screen').style.display = 'none';
@@ -833,11 +833,14 @@
 
   window.deleteCat = async (id) => {
     const c = allCategories.find(c => c.id === id);
-    if (!c || c.isDefault) return;
-    if (!confirm(`Delete "${c.name}"? Its tasks will move to Other.`)) return;
+    if (!c) return;
+    const remaining = allCategories.filter(x => x.id !== id);
+    if (remaining.length === 0) { showToast('You must keep at least one category.', 'error'); return; }
+    if (!confirm(`Delete "${c.name}"? Its tasks will move to the first available category.`)) return;
+    const fallbackId = remaining[0].id;
     const snap = await getDocs(tasksRef());
     const batch = writeBatch(db);
-    snap.docs.forEach(d => { if (d.data().category === id) batch.update(d.ref, { category:'other' }); });
+    snap.docs.forEach(d => { if (d.data().category === id) batch.update(d.ref, { category: fallbackId }); });
     await batch.commit();
     await deleteDoc(doc(db, `users/${currentUser.uid}/categories`, id));
     await logHistory('deleted category', c.name, 'red');
