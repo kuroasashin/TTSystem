@@ -395,6 +395,57 @@
     .hidden { display: none !important; }
     .spinning { animation: spin 1s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── SCHEDULE CONVERTER TAB ── */
+    .nav-item#nav-schedule { }
+    
+    .schedule-input {
+      width: 100%; min-height: 140px; resize: vertical;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 9px; padding: 12px 14px;
+      color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.78rem;
+      outline: none; transition: border-color 0.2s; line-height: 1.6;
+    }
+    .schedule-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,92,252,0.12); }
+    
+    .schedule-table-wrap {
+      overflow-x: auto; border-radius: var(--radius);
+      border: 1px solid var(--border); margin-top: 4px;
+    }
+    .schedule-table {
+      width: 100%; border-collapse: collapse;
+      font-size: 0.78rem; font-family: 'Space Mono', monospace;
+    }
+    .schedule-table th {
+      background: var(--surface); padding: 10px 14px;
+      text-align: left; font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.6px; color: var(--muted);
+      border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .schedule-table td {
+      padding: 9px 14px; border-bottom: 1px solid var(--border);
+      color: var(--text); vertical-align: middle; white-space: nowrap;
+    }
+    .schedule-table tr:last-child td { border-bottom: none; }
+    .schedule-table tr:hover td { background: rgba(255,255,255,0.025); }
+    .schedule-table td:first-child { color: var(--muted); font-weight: 700; min-width: 40px; }
+    .sched-recess td { background: rgba(241,196,15,0.06); }
+    .sched-recess td:nth-child(2),
+    .sched-recess td:nth-child(3),
+    .sched-recess td:nth-child(4) { color: var(--yellow); font-weight: 700; }
+    .sched-final td { background: rgba(252,92,125,0.06); }
+    .sched-final td:nth-child(2),
+    .sched-final td:nth-child(3),
+    .sched-final td:nth-child(4) { color: var(--accent2); font-weight: 700; }
+    .sched-break td { background: rgba(107,107,138,0.08); }
+    .sched-break td:nth-child(2),
+    .sched-break td:nth-child(3),
+    .sched-break td:nth-child(4) { color: var(--muted); }
+    .sched-label {
+      display: inline-block; padding: 2px 8px; border-radius: 99px;
+      font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+      background: rgba(124,92,252,0.12); color: var(--accent);
+    }
   </style>
 </head>
 <body>
@@ -455,6 +506,9 @@
         </button>
         <button class="nav-item" id="nav-calendar" onclick="switchPage('calendar')">
           <span class="nav-icon">📅</span> Calendar
+        </button>
+        <button class="nav-item" id="nav-schedule" onclick="switchPage('schedule')">
+          <span class="nav-icon">🗓</span> Schedule
         </button>
         <button class="nav-item" id="nav-profile" onclick="switchPage('profile')">
           <span class="nav-icon">👤</span> Profile
@@ -577,7 +631,27 @@
           <div class="cal-grid" id="cal-grid"></div>
         </div>
       </div><!-- /page-calendar -->
-
+            <!-- ════ PAGE: SCHEDULE ════ -->
+      <div class="page-view" id="page-schedule">
+        <div class="tasks-panel">
+          <div class="tasks-header">
+            <span class="task-count-badge" id="sched-row-count">0 rows</span>
+            <h2>Schedule Converter</h2>
+            <button class="btn btn-primary btn-sm" onclick="convertSchedule()">Convert →</button>
+          </div>
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
+            <label style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);display:block;margin-bottom:8px;">Paste Raw Schedule Text</label>
+            <textarea class="schedule-input" id="schedule-raw-input" placeholder="Paste your schedule text here…&#10;e.g. Trimester 1  Trimester 2  Trimester 3&#10;Week Schedule 2025 2026 2026&#10;1 Study Weeks  1 Sep - 7 Sep …"></textarea>
+          </div>
+          <div style="padding:16px 20px;" id="schedule-output-wrap">
+            <div class="empty-state" style="padding:32px 20px;">
+              <div class="icon">🗓</div>
+              <p>Paste schedule text above and hit <strong>Convert →</strong></p>
+              <p class="hint">Supports the standard SIT trimester format.</p>
+            </div>
+          </div>
+        </div>
+      </div><!-- /page-schedule -->
       <!-- ════ PAGE: PROFILE ════ -->
       <div class="page-view" id="page-profile">
         <div class="profile-card">
@@ -1054,7 +1128,7 @@
   window.closeNav = () => document.getElementById('nav-overlay').classList.remove('open');
 
   window.switchPage = (page) => {
-    ['tasks','calendar','profile'].forEach(p => {
+    ['tasks','calendar','profile','schedule'].forEach(p => {
       document.getElementById(`page-${p}`).classList.toggle('active', p === page);
       document.getElementById(`nav-${p}`).classList.toggle('active', p === page);
     });
@@ -1087,6 +1161,99 @@
   document.querySelectorAll('.modal-overlay').forEach(o => {
     o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
   });
+  // ══ SCHEDULE CONVERTER ══
+  window.convertSchedule = () => {
+    const raw = document.getElementById('schedule-raw-input').value.trim();
+    if (!raw) { showToast('Please paste schedule text first.', 'error'); return; }
+  
+    // Normalize whitespace runs → single tab/space, split into tokens
+    const tokens = raw.replace(/\t+/g, ' ').split(/\n/).map(l => l.trim()).filter(Boolean);
+  
+    // Find header rows and skip them (lines without date-like patterns)
+    const datePattern = /\d{1,2}\s+\w{3}/;
+    const rows = [];
+  
+    // Flat-parse: collect all lines, detect row type by content
+    const rowTypes = {
+      'Recess Week': 'recess',
+      'Final Assessment': 'final',
+      'Trimester Break': 'break',
+      'Study Weeks': 'study',
+    };
+  
+    let currentLabel = 'Study Weeks';
+  
+    tokens.forEach(line => {
+      // Detect row type label lines (no date info)
+      const matchType = Object.keys(rowTypes).find(k => line.includes(k));
+      if (matchType) currentLabel = matchType;
+  
+      // Extract week number at start
+      const weekMatch = line.match(/^(\d{1,2})\s+(.*)/);
+      if (!weekMatch) return;
+  
+      const weekNum = weekMatch[1];
+      const rest    = weekMatch[2];
+  
+      // Extract all date ranges: "1 Sep - 7 Sep", "4 May - 10 May" etc.
+      const dateRangeRx = /(\d{1,2}\s+\w{3,9}\s*[-–]\s*\d{1,2}\s*\w{3,9})/g;
+      const dates = [];
+      let m;
+      while ((m = dateRangeRx.exec(rest)) !== null) dates.push(m[1].trim());
+  
+      // Also capture the label if embedded in this line
+      const embeddedType = Object.keys(rowTypes).find(k => rest.includes(k));
+      const rowLabel = embeddedType || currentLabel;
+  
+      rows.push({
+        week:  weekNum,
+        label: rowLabel,
+        t1:    dates[0] || '—',
+        t2:    dates[1] || '—',
+        t3:    dates[2] || '—',
+        type:  rowTypes[rowLabel] || 'study',
+      });
+    });
+  
+    if (!rows.length) { showToast('Could not parse any rows. Check the format.', 'error'); return; }
+  
+    document.getElementById('sched-row-count').textContent = rows.length + ' rows';
+  
+    const typeLabel = { study:'Study Week', recess:'Recess Week', final:'Final Assessment', break:'Trimester Break' };
+  
+    const tableHtml = `
+      <div class="schedule-table-wrap">
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>Wk</th>
+              <th>Type</th>
+              <th>Trimester 1 (2025)</th>
+              <th>Trimester 2 (2026)</th>
+              <th>Trimester 3 (2026)</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr class="sched-${r.type}">
+                <td>${r.week}</td>
+                <td><span class="sched-label" style="${
+                  r.type==='recess'  ? 'background:rgba(241,196,15,0.15);color:var(--yellow)' :
+                  r.type==='final'   ? 'background:rgba(252,92,125,0.15);color:var(--accent2)' :
+                  r.type==='break'   ? 'background:rgba(107,107,138,0.15);color:var(--muted)' :
+                  ''
+                }">${typeLabel[r.type]}</span></td>
+                <td>${r.t1}</td>
+                <td>${r.t2}</td>
+                <td>${r.t3}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  
+    document.getElementById('schedule-output-wrap').innerHTML = tableHtml;
+    showToast(`Converted ${rows.length} rows!`, 'success');
+  };
 </script>
 </body>
 </html>
