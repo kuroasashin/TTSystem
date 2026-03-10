@@ -1088,39 +1088,80 @@
   window.setCatFilter    = (cat)    => { currentCatFilter = cat; renderTasks(); };
   window.sortTasks       = (s)      => { currentSort = s; renderTasks(); };
 
-  // ══ GOOGLE CALENDAR ══
-  window.initGoogleCalendar = () => {
-    const script = document.createElement('script');
-    script.src   = 'https://apis.google.com/js/api.js';
-    script.onload = () => {
-      window.gapi.load('client:auth2', () => {
-        window.gapi.client.init({
-          apiKey: 'AIzaSyDcGry8k__dSx4K9_M77sUk5zYJZK3PlD8', clientId: '732358137908-hm3kh03h9h2apq9f9c405o6hv361qqnc.apps.googleusercontent.com',
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-          scope: 'https://www.googleapis.com/auth/calendar.events'
-        }).then(() => window.gapi.auth2.getAuthInstance().signIn())
-          .then(() => {
-            gcalConnected = true; gapi = window.gapi;
-            document.getElementById('gcal-status').textContent = '✅ Calendar Connected';
-            renderTasks(); showToast('Google Calendar connected!', 'success');
-          }).catch(e => showToast('Calendar error: ' + e.error, 'error'));
-      });
-    };
-    document.head.appendChild(script);
+  // ══ GOOGLE CALENDAR (Modern GIS) ══
+  let gapiInited = false;
+  let gisInited  = false;
+  let tokenClient = null;
+  
+  function loadGapiScript() {
+    return new Promise(resolve => {
+      const s = document.createElement('script');
+      s.src   = 'https://apis.google.com/js/api.js';
+      s.onload = resolve;
+      document.head.appendChild(s);
+    });
+  }
+  
+  function loadGisScript() {
+    return new Promise(resolve => {
+      const s = document.createElement('script');
+      s.src   = 'https://accounts.google.com/gsi/client';
+      s.onload = resolve;
+      document.head.appendChild(s);
+    });
+  }
+  
+  window.initGoogleCalendar = async () => {
+    showToast('Loading Google Calendar...', 'info');
+  
+    await loadGapiScript();
+    await new Promise(resolve => window.gapi.load('client', resolve));
+    await window.gapi.client.init({
+      apiKey: 'YOUR_API_KEY',   // ← replace
+      discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+    });
+    gapiInited = true;
+  
+    await loadGisScript();
+    tokenClient = window.google.accounts.oauth2.initTokenClient({
+      client_id: 'YOUR_CLIENT_ID',   // ← replace
+      scope: 'https://www.googleapis.com/auth/calendar.events',
+      callback: (tokenResponse) => {
+        if (tokenResponse.error) {
+          showToast('Calendar auth failed: ' + tokenResponse.error, 'error');
+          return;
+        }
+        gcalConnected = true;
+        gapi = window.gapi;
+        document.getElementById('gcal-status').textContent = '✅ Calendar Connected';
+        renderTasks();
+        showToast('Google Calendar connected!', 'success');
+      },
+    });
+    gisInited = true;
+  
+    // Request token (triggers Google sign-in popup)
+    tokenClient.requestAccessToken({ prompt: 'consent' });
   };
-
+  
   window.addToCalendar = async (taskId) => {
     const t = allTasks.find(t => t.id === taskId);
     if (!t || !t.due || !gapi) return;
     try {
-      await gapi.client.calendar.events.insert({ calendarId:'primary', resource:{
-        summary: t.title, description: t.description||'',
-        start: { date: t.due, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
-        end:   { date: t.due, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
-        reminders: { useDefault: true }
-      }});
+      await gapi.client.calendar.events.insert({
+        calendarId: 'primary',
+        resource: {
+          summary:     t.title,
+          description: t.description || '',
+          start: { date: t.due, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+          end:   { date: t.due, timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone },
+          reminders: { useDefault: true }
+        }
+      });
       showToast('Added to Google Calendar! 📅', 'success');
-    } catch (e) { showToast('Calendar sync failed.', 'error'); }
+    } catch (e) {
+      showToast('Calendar sync failed: ' + e.message, 'error');
+    }
   };
 
   // ══ NAV ══
